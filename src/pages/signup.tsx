@@ -9,7 +9,7 @@ import { PageWrapper } from '@/components/PageWrapper';
 
 import { emailSchema, passwordSchema } from '@/utils/schemas';
 
-const signInSchema = yup.object({
+const signUpSchema = yup.object({
   email: emailSchema,
   password: passwordSchema,
 });
@@ -25,7 +25,7 @@ export default function SignUp() {
     handleSubmit,
     formState: { errors },
   } = useForm<FormData>({
-    resolver: yupResolver(signInSchema),
+    resolver: yupResolver(signUpSchema),
     defaultValues: { email: '', password: '' },
   });
   const router = useRouter();
@@ -36,7 +36,7 @@ export default function SignUp() {
   };
 
   return (
-    <PageWrapper title='Sign in - Spotify Trending Artists App'>
+    <PageWrapper title='Sign up - Spotify Trending Artists App'>
       <div className='mx-auto flex flex-col items-center justify-center px-6 py-8 md:h-screen lg:py-0'>
         <h1 className='mb-16 text-3xl font-semibold text-gray-900 dark:text-white'>
           Spotify trending artists
@@ -44,7 +44,7 @@ export default function SignUp() {
         <div className='w-full rounded-lg bg-white shadow dark:border dark:border-gray-700 dark:bg-gray-800 sm:max-w-md md:mt-0 xl:p-0'>
           <div className='space-y-4 p-6 sm:p-8 md:space-y-6'>
             <h2 className='text-xl font-semibold leading-tight tracking-tight text-gray-900 dark:text-white md:text-2xl'>
-              Sign in to your account
+              Sign up
             </h2>
             <form
               className='space-y-4 md:space-y-6'
@@ -70,15 +70,15 @@ export default function SignUp() {
                 type='submit'
                 className='w-full rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-primary-700 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800'
               >
-                Sign in
+                Sign up
               </button>
               <p className='text-sm font-light text-gray-500 dark:text-gray-400'>
-                Don’t have an account yet?{' '}
+                Already have an account?{' '}
                 <Link
-                  href='/signup'
+                  href='/'
                   className='font-medium text-primary-600 hover:underline dark:text-primary-500'
                 >
-                  Sign up
+                  Sign in
                 </Link>
               </p>
             </form>
