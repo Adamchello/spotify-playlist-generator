@@ -1,25 +1,55 @@
+import Cookies from 'js-cookie';
 import { useState } from 'react';
 
 import { PageWrapper } from '@/components/PageWrapper';
 import { SongInformation } from '@/components/SongInformation';
 
-import { GetSongsResponseAPI } from '@/services/spotify/types';
+import {
+  GetSongsResponseAPI,
+  GetTokenResponseAPI,
+} from '@/services/spotify/types';
 
-import { SongType } from '@/types/spotify';
+import { Song } from '@/types/spotify';
 
 const getFixedIndex = (index: number) => {
   return index < 10 ? `0${index}` : `${index}`;
 };
 
 export default function Dashboard() {
-  const [songs, setSongs] = useState<SongType[]>([]);
+  const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
+  const getAccessToken = async () => {
+    const cookieAccessToken = Cookies.get('spotify_access_token');
+    if (cookieAccessToken) return cookieAccessToken;
+
+    const result = await fetch('/api/spotify/token');
+    const data: GetTokenResponseAPI = await result.json();
+
+    const { accessToken, expiresTimeInSeconds } = data;
+    const expireDate = new Date(
+      new Date().getTime() + expiresTimeInSeconds * 1000
+    );
+
+    Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
+
+    return accessToken;
+  };
 
   const onClick = async () => {
     setIsLoading(true);
     try {
-      const result = await fetch('/api/spotify');
+      const accessToken = await getAccessToken();
+
+      const result = await fetch('/api/spotify', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ accessToken }),
+      });
       const data: GetSongsResponseAPI = await result.json();
+
       setSongs(data.songs);
     } catch (err) {
       alert(err);

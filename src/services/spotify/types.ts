@@ -1,12 +1,12 @@
-import { SongType } from '@/types/spotify';
+import { Song } from '@/types/spotify';
 
-export type AccessTokenRequestType = {
+export type AccessTokenRequest = {
   access_token: string;
   token_type: string;
   expires_in: number;
 };
 
-export type TrackType = {
+export type Track = {
   id: string;
   album: {
     images: { height: number; url: string }[];
@@ -17,11 +17,16 @@ export type TrackType = {
   popularity: number;
 };
 
-export type GetSongsRequestType = {
+export type GetSongsRequest = {
   seeds: Record<string, string | number>[];
-  tracks: TrackType[];
+  tracks: Track[];
 };
 
 export type GetSongsResponseAPI = {
-  songs: SongType[];
+  songs: Song[];
+};
+
+export type GetTokenResponseAPI = {
+  accessToken: string;
+  expiresTimeInSeconds: number;
 };

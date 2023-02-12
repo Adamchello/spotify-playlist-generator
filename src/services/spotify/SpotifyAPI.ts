@@ -1,4 +1,4 @@
-import { AccessTokenRequestType, GetSongsRequestType } from './types';
+import { AccessTokenRequest, GetSongsRequest } from './types';
 import {
   getAlbumImage,
   getPlaysNumber,
@@ -26,9 +26,12 @@ export class SpotifyAPI {
       requestParams
     );
 
-    const data: AccessTokenRequestType = await res.json();
+    const data: AccessTokenRequest = await res.json();
 
-    return data.access_token;
+    return {
+      accessToken: data.access_token,
+      expiresTimeInSeconds: data.expires_in,
+    };
   };
 
   static getSongs = async (accessToken: string) => {
@@ -44,7 +47,7 @@ export class SpotifyAPI {
       requestParams
     );
 
-    const data: GetSongsRequestType = await res.json();
+    const data: GetSongsRequest = await res.json();
 
     return data.tracks.map((track) => {
       const duration = millisToMinutesAndSeconds(track.duration_ms);

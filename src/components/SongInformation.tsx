@@ -2,9 +2,9 @@ import Image from 'next/image';
 
 import { HeartSVG, OptionDotsSVG, UserSVG } from './Icons';
 
-import { SongType } from '@/types/spotify';
+import { Song } from '@/types/spotify';
 
-type SongInformationProps = SongType & { elementIndex: string };
+type SongInformationProps = Song & { elementIndex: string };
 
 export function SongInformation({
   elementIndex,

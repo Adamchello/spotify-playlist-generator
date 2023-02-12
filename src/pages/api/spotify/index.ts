@@ -8,9 +8,10 @@ const handler = async (
   res: NextApiResponse<GetSongsResponseAPI>
 ) => {
   switch (req.method) {
-    case 'GET': {
+    case 'POST': {
       try {
-        const songs = await getSongs();
+        const accessToken = req.body?.accessToken || '';
+        const songs = await getSongs(accessToken);
         res.status(200).json({ songs });
       } catch (error) {
         res.status(400).json({ songs: [] });

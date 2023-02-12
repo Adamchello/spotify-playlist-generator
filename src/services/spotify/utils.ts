@@ -1,15 +1,13 @@
-import { TrackType } from './types';
+import { Track } from './types';
 
 export const millisToMinutesAndSeconds = (millis: number) => {
-  const minutes = Math.floor(millis / 60000);
-  const seconds = Number(((millis % 60000) / 1000).toFixed(0));
-
-  return seconds == 60
-    ? minutes + 1 + ':00'
-    : minutes + ':' + (seconds < 10 ? '0' : '') + seconds;
+  return new Intl.DateTimeFormat('en', {
+    minute: 'numeric',
+    second: 'numeric',
+  }).format(millis);
 };
 
-export const getAlbumImage = (track: TrackType) => {
+export const getAlbumImage = (track: Track) => {
   const albumImage = track.album.images.find((image) => image.height === 64);
 
   return albumImage !== undefined ? albumImage.url : '';
@@ -19,6 +17,9 @@ const getRandomNumber = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min) + min);
 };
 
+// getNumberWithSpaces functionality:
+// 1000000 => "1 000 000"
+// 10000 => "10 000"
 function getNumberWithSpaces(givenNumber: number) {
   return givenNumber.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
 }

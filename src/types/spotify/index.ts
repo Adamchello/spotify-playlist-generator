@@ -1,4 +1,4 @@
-export type SongType = {
+export type Song = {
   id: string;
   image: string;
   name: string;
