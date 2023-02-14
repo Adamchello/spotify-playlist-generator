@@ -12,9 +12,7 @@ export function PageWrapper({
       <Head>
         <title>{title}</title>
       </Head>
-      <section className='h-screen bg-gray-50 dark:bg-gray-900'>
-        {children}
-      </section>
+      <section className='h-screen bg-gray-900'>{children}</section>
     </>
   );
 }
