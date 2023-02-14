@@ -33,7 +33,7 @@ export function FormInput({
         placeholder={placeholder}
         {...register(id)}
       />
-      {error.length > 0 ? <p className='my-2 text-red-500'>{error}</p> : null}
+      {error.length > 0 ? <p className='my-2 text-red-400'>{error}</p> : null}
     </div>
   );
 }
