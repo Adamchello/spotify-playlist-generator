@@ -1,5 +1,7 @@
 import Cookies from 'js-cookie';
-import { useState } from 'react';
+import { useRouter } from 'next/router';
+import { signOut, useSession } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 
 import { PageWrapper } from '@/components/PageWrapper';
 import { SongInformation } from '@/components/SongInformation';
@@ -18,22 +20,37 @@ const getFixedIndex = (index: number) => {
 export default function Dashboard() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!session && status !== 'loading') {
+      router.push('/');
+    }
+  }, [session, status, router]);
 
   const getAccessToken = async () => {
     const cookieAccessToken = Cookies.get('spotify_access_token');
     if (cookieAccessToken) return cookieAccessToken;
 
-    const result = await fetch('/api/spotify/token');
-    const data: GetTokenResponseAPI = await result.json();
+    try {
+      const result = await fetch('/api/spotify/token');
+      if (!result.ok) {
+        throw Error('Oops. The error has occured, try again later.');
+      }
+      const data: GetTokenResponseAPI = await result.json();
 
-    const { accessToken, expiresTimeInSeconds } = data;
-    const expireDate = new Date(
-      new Date().getTime() + expiresTimeInSeconds * 1000
-    );
+      const { accessToken, expiresTimeInSeconds } = data;
+      const expireDate = new Date(
+        new Date().getTime() + expiresTimeInSeconds * 1000
+      );
 
-    Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
+      Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
 
-    return accessToken;
+      return accessToken;
+    } catch (err) {
+      return '';
+    }
   };
 
   const onClick = async () => {
@@ -61,6 +78,12 @@ export default function Dashboard() {
   return (
     <PageWrapper title='Dashboard - Spotify Trending Artists App'>
       <div className='mx-auto flex h-screen max-w-3xl flex-col items-center justify-center px-6 py-8 lg:py-0'>
+        <button
+          onClick={() => signOut()}
+          className='mb-8 rounded-lg bg-primary-600 px-12 py-2.5 text-center text-xl font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
+        >
+          Sign out
+        </button>
         <button
           onClick={onClick}
           disabled={isLoading}

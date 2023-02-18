@@ -1,38 +1,61 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+import { ErrorMessage } from '@/components/ErrorMessage';
 import { FormInput } from '@/components/FormInput';
 import { PageWrapper } from '@/components/PageWrapper';
 
+import { CreateUserResponseAPI } from '@/services/auth/types';
 import { emailSchema, passwordSchema } from '@/utils/schemas';
+
+import { AuthFormValues } from '@/types/auth';
 
 const signUpSchema = yup.object({
   email: emailSchema,
   password: passwordSchema,
 });
 
-type FormData = {
-  email: string;
-  password: string;
-};
-
 export default function SignUp() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<AuthFormValues>({
     resolver: yupResolver(signUpSchema),
     defaultValues: { email: '', password: '' },
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [formProcessing, setFormProcessing] = useState(false);
   const router = useRouter();
 
-  const onSubmit = ({ email, password }: FormData) => {
-    console.log(email, password);
-    router.push('/dashboard');
+  const onSubmit = async ({ email, password }: AuthFormValues) => {
+    setFormProcessing(true);
+    setErrorMessage('');
+
+    try {
+      const result = await fetch('/api/auth/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email, password }),
+      });
+      const data: CreateUserResponseAPI = await result.json();
+
+      if (data.status === 'success') {
+        router.push('/?signupSuccess=true');
+      } else {
+        throw new Error(data.error);
+      }
+    } catch (err) {
+      setErrorMessage((err as Error).message);
+    } finally {
+      setFormProcessing(false);
+    }
   };
 
   return (
@@ -68,10 +91,14 @@ export default function SignUp() {
               />
               <button
                 type='submit'
+                disabled={formProcessing}
                 className='w-full rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
               >
-                Sign up
+                {formProcessing ? 'Loading...' : 'Sign up'}
               </button>
+              {errorMessage.length > 0 ? (
+                <ErrorMessage text={errorMessage} />
+              ) : null}
               <p className='text-sm font-light text-gray-500 dark:text-gray-400'>
                 Already have an account?{' '}
                 <Link

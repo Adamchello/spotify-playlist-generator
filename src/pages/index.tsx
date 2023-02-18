@@ -1,38 +1,75 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
+import { signIn } from 'next-auth/react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 
+import { ErrorMessage } from '@/components/ErrorMessage';
 import { FormInput } from '@/components/FormInput';
 import { PageWrapper } from '@/components/PageWrapper';
 
 import { emailSchema, passwordSchema } from '@/utils/schemas';
+
+import { AuthFormValues } from '@/types/auth';
 
 const signInSchema = yup.object({
   email: emailSchema,
   password: passwordSchema,
 });
 
-type FormData = {
-  email: string;
-  password: string;
-};
-
-export default function SignIn() {
+export default function SignInPage() {
   const {
     register,
     handleSubmit,
     formState: { errors },
-  } = useForm<FormData>({
+  } = useForm<AuthFormValues>({
     resolver: yupResolver(signInSchema),
     defaultValues: { email: '', password: '' },
   });
+  const [errorMessage, setErrorMessage] = useState('');
+  const [informationMessage, setInformationMessage] = useState('');
+  const [formProcessing, setFormProcessing] = useState(false);
   const router = useRouter();
 
-  const onSubmit = ({ email, password }: FormData) => {
-    console.log(email, password);
-    router.push('/dashboard');
+  useEffect(() => {
+    const signUpInfo = router.query?.signupSuccess || '';
+    if (signUpInfo !== 'true') return;
+
+    setInformationMessage(
+      'Your account has been created. You can sign in now.'
+    );
+    const timer = setTimeout(() => {
+      setInformationMessage('');
+      clearTimeout(timer);
+    }, 5000);
+  }, [router]);
+
+  const onSubmit = async ({ email, password }: AuthFormValues) => {
+    setFormProcessing(true);
+    if (errorMessage.length > 0) setErrorMessage('');
+
+    try {
+      const result = await signIn('credentials', {
+        email,
+        password,
+        redirect: false,
+      });
+
+      if (result?.ok) {
+        router.push('/dashboard');
+      } else {
+        throw new Error(
+          result?.error ||
+            'Oops! An unexpected problem occurred, please try again later.'
+        );
+      }
+    } catch (err) {
+      setErrorMessage((err as Error).message);
+    } finally {
+      setFormProcessing(false);
+    }
   };
 
   return (
@@ -68,10 +105,24 @@ export default function SignIn() {
               />
               <button
                 type='submit'
+                disabled={formProcessing}
                 className='w-full rounded-lg bg-primary-600 px-5 py-2.5 text-center text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
               >
-                Sign in
+                {formProcessing ? 'Loading...' : 'Sign in'}
               </button>
+              {informationMessage.length > 0 ? (
+                <div
+                  className='rounded-lg bg-gray-800 p-1 text-center text-sm text-green-400'
+                  role='alert'
+                >
+                  <span className='text-sm font-medium'>
+                    {informationMessage}
+                  </span>
+                </div>
+              ) : null}
+              {errorMessage.length > 0 ? (
+                <ErrorMessage text={errorMessage} />
+              ) : null}
               <p className='text-sm font-light text-gray-500 dark:text-gray-400'>
                 Don’t have an account yet?{' '}
                 <Link
