@@ -35,16 +35,16 @@ export default function SignInPage() {
 
   useEffect(() => {
     const signUpInfo = router.query?.signupSuccess || '';
-    if (signUpInfo === 'true') {
-      setInformationMessage(
-        'Your account has been created. You can sign in now.'
-      );
-      const timer = setTimeout(() => {
-        setInformationMessage('');
-        clearTimeout(timer);
-      }, 5000);
-    }
-  }, []);
+    if (signUpInfo !== 'true') return;
+
+    setInformationMessage(
+      'Your account has been created. You can sign in now.'
+    );
+    const timer = setTimeout(() => {
+      setInformationMessage('');
+      clearTimeout(timer);
+    }, 5000);
+  }, [router]);
 
   const onSubmit = async ({ email, password }: AuthFormValues) => {
     setFormProcessing(true);

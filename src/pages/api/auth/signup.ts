@@ -11,10 +11,10 @@ const handler = async (
     case 'POST': {
       try {
         const result = await createUser(req.body);
-        res.status(201).json({ ok: true, user: result });
+        res.status(201).json({ status: 'success', user: result });
       } catch (err) {
         res.status(422).json({
-          ok: false,
+          status: 'error',
           error: (err as Error).message,
         });
       }

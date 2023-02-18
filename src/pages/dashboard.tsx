@@ -27,23 +27,30 @@ export default function Dashboard() {
     if (!session && status !== 'loading') {
       router.push('/');
     }
-  }, [session, status]);
+  }, [session, status, router]);
 
   const getAccessToken = async () => {
     const cookieAccessToken = Cookies.get('spotify_access_token');
     if (cookieAccessToken) return cookieAccessToken;
 
-    const result = await fetch('/api/spotify/token');
-    const data: GetTokenResponseAPI = await result.json();
+    try {
+      const result = await fetch('/api/spotify/token');
+      if (!result.ok) {
+        throw Error('Oops. The error has occured, try again later.');
+      }
+      const data: GetTokenResponseAPI = await result.json();
 
-    const { accessToken, expiresTimeInSeconds } = data;
-    const expireDate = new Date(
-      new Date().getTime() + expiresTimeInSeconds * 1000
-    );
+      const { accessToken, expiresTimeInSeconds } = data;
+      const expireDate = new Date(
+        new Date().getTime() + expiresTimeInSeconds * 1000
+      );
 
-    Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
+      Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
 
-    return accessToken;
+      return accessToken;
+    } catch (err) {
+      return '';
+    }
   };
 
   const onClick = async () => {

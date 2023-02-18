@@ -1,3 +1,5 @@
+type User = { email: string; id: string };
+
 export type CreateUserResponseAPI =
-  | { ok: true; user: { email: string; id: string } }
-  | { ok: false; error: string };
+  | { status: 'success'; user: User; error?: never }
+  | { status: 'error'; user?: never; error: string };

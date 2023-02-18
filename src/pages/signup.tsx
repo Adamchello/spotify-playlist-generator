@@ -46,7 +46,7 @@ export default function SignUp() {
       });
       const data: CreateUserResponseAPI = await result.json();
 
-      if (data.ok) {
+      if (data.status === 'success') {
         router.push('/?signupSuccess=true');
       } else {
         throw new Error(data.error);
