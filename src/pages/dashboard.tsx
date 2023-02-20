@@ -2,10 +2,12 @@ import Cookies from 'js-cookie';
 import { useRouter } from 'next/router';
 import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 
 import { PageWrapper } from '@/components/PageWrapper';
 import { SongInformation } from '@/components/SongInformation';
 
+import { AddSongResponseAPI } from '@/services/auth/types';
 import {
   GetSongsResponseAPI,
   GetTokenResponseAPI,
@@ -20,6 +22,7 @@ const getFixedIndex = (index: number) => {
 export default function Dashboard() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+
   const { data: session, status } = useSession();
   const router = useRouter();
 
@@ -27,6 +30,8 @@ export default function Dashboard() {
     if (!session && status !== 'loading') {
       router.push('/');
     }
+    if (!session) return;
+    setSongs(session.user?.songs || []);
   }, [session, status, router]);
 
   const getAccessToken = async () => {
@@ -49,11 +54,29 @@ export default function Dashboard() {
 
       return accessToken;
     } catch (err) {
+      toast.error((err as Error).message);
       return '';
     }
   };
 
-  const onClick = async () => {
+  const handleAddSongsToAccount = async (songsData: Song[]) => {
+    const result = await fetch('/api/auth/songs', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        songs: songsData,
+      }),
+    });
+    const data: AddSongResponseAPI = await result.json();
+    if (data.status === 'error') throw new Error(data.error);
+
+    setSongs(songsData);
+    toast.success('Data generated successfully');
+  };
+
+  const handleGeneratePlaylist = async () => {
     setIsLoading(true);
     try {
       const accessToken = await getAccessToken();
@@ -67,9 +90,9 @@ export default function Dashboard() {
       });
       const data: GetSongsResponseAPI = await result.json();
 
-      setSongs(data.songs);
+      await handleAddSongsToAccount(data.songs);
     } catch (err) {
-      alert(err);
+      toast.error((err as Error).message);
     } finally {
       setIsLoading(false);
     }
@@ -85,7 +108,7 @@ export default function Dashboard() {
           Sign out
         </button>
         <button
-          onClick={onClick}
+          onClick={handleGeneratePlaylist}
           disabled={isLoading}
           className='rounded-lg bg-primary-600 px-12 py-2.5 text-center text-xl font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
         >
