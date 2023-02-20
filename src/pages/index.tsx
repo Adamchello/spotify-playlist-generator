@@ -2,11 +2,11 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
-import { ErrorMessage } from '@/components/ErrorMessage';
 import { FormInput } from '@/components/FormInput';
 import { PageWrapper } from '@/components/PageWrapper';
 
@@ -28,27 +28,24 @@ export default function SignInPage() {
     resolver: yupResolver(signInSchema),
     defaultValues: { email: '', password: '' },
   });
-  const [errorMessage, setErrorMessage] = useState('');
-  const [informationMessage, setInformationMessage] = useState('');
   const [formProcessing, setFormProcessing] = useState(false);
   const router = useRouter();
+  const isMounted = useRef(false);
 
   useEffect(() => {
     const signUpInfo = router.query?.signupSuccess || '';
-    if (signUpInfo === 'true') {
-      setInformationMessage(
-        'Your account has been created. You can sign in now.'
-      );
-      const timer = setTimeout(() => {
-        setInformationMessage('');
-        clearTimeout(timer);
-      }, 5000);
+    if (signUpInfo !== 'true') return;
+
+    if (!isMounted.current) {
+      isMounted.current = true;
+      return;
     }
-  }, []);
+
+    toast.success('Your account has been created. You can sign in now.');
+  }, [router]);
 
   const onSubmit = async ({ email, password }: AuthFormValues) => {
     setFormProcessing(true);
-    if (errorMessage.length > 0) setErrorMessage('');
 
     try {
       const result = await signIn('credentials', {
@@ -66,7 +63,7 @@ export default function SignInPage() {
         );
       }
     } catch (err) {
-      setErrorMessage((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setFormProcessing(false);
     }
@@ -110,19 +107,6 @@ export default function SignInPage() {
               >
                 {formProcessing ? 'Loading...' : 'Sign in'}
               </button>
-              {informationMessage.length > 0 ? (
-                <div
-                  className='rounded-lg bg-gray-800 p-1 text-center text-sm text-green-400'
-                  role='alert'
-                >
-                  <span className='text-sm font-medium'>
-                    {informationMessage}
-                  </span>
-                </div>
-              ) : null}
-              {errorMessage.length > 0 ? (
-                <ErrorMessage text={errorMessage} />
-              ) : null}
               <p className='text-sm font-light text-gray-500 dark:text-gray-400'>
                 Don’t have an account yet?{' '}
                 <Link

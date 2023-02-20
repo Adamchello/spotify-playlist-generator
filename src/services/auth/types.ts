@@ -1,3 +1,18 @@
-export type CreateUserResponseAPI =
-  | { ok: true; user: { email: string; id: string } }
-  | { ok: false; error: string };
+import { NextApiRequest } from 'next';
+
+import { ResponseAPI } from '../types';
+
+import { Song } from '@/types/spotify';
+
+type User = { email: string; id: string };
+
+export type NextApiRequestWithUser = NextApiRequest & {
+  currentUser?: User | null;
+};
+
+export type AddSongRequestBody = {
+  songs: Song[];
+};
+
+export type AddSongResponseAPI = ResponseAPI<{ count: number }>;
+export type CreateUserResponseAPI = ResponseAPI<User>;

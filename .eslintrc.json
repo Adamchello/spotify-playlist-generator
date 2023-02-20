@@ -17,7 +17,6 @@
     "no-console": "warn",
     "@typescript-eslint/explicit-module-boundary-types": "off",
     "react/no-unescaped-entities": "off",
-    "react-hooks/exhaustive-deps": "off",
     "@typescript-eslint/no-namespace": "off",
 
     "react/display-name": "off",

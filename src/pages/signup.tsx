@@ -3,9 +3,9 @@ import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import * as yup from 'yup';
 
-import { ErrorMessage } from '@/components/ErrorMessage';
 import { FormInput } from '@/components/FormInput';
 import { PageWrapper } from '@/components/PageWrapper';
 
@@ -28,13 +28,11 @@ export default function SignUp() {
     resolver: yupResolver(signUpSchema),
     defaultValues: { email: '', password: '' },
   });
-  const [errorMessage, setErrorMessage] = useState('');
   const [formProcessing, setFormProcessing] = useState(false);
   const router = useRouter();
 
   const onSubmit = async ({ email, password }: AuthFormValues) => {
     setFormProcessing(true);
-    setErrorMessage('');
 
     try {
       const result = await fetch('/api/auth/signup', {
@@ -46,13 +44,13 @@ export default function SignUp() {
       });
       const data: CreateUserResponseAPI = await result.json();
 
-      if (data.ok) {
+      if (data.status === 'success') {
         router.push('/?signupSuccess=true');
       } else {
         throw new Error(data.error);
       }
     } catch (err) {
-      setErrorMessage((err as Error).message);
+      toast.error((err as Error).message);
     } finally {
       setFormProcessing(false);
     }
@@ -96,9 +94,6 @@ export default function SignUp() {
               >
                 {formProcessing ? 'Loading...' : 'Sign up'}
               </button>
-              {errorMessage.length > 0 ? (
-                <ErrorMessage text={errorMessage} />
-              ) : null}
               <p className='text-sm font-light text-gray-500 dark:text-gray-400'>
                 Already have an account?{' '}
                 <Link

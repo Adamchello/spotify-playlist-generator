@@ -7,7 +7,7 @@ export const getSpotifyToken = async () => {
 };
 
 export const getSongs = async (accessToken: string) => {
-  const songs = await SpotifyAPI.getSongs(accessToken);
+  const songsCount = await SpotifyAPI.getSongs(accessToken);
 
-  return songs;
+  return songsCount;
 };
