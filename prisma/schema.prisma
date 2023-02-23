@@ -7,10 +7,23 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model Song {
+  id          String  @id @default(cuid())
+  spotifyId   String
+  author      String
+  duration    String
+  image       String
+  name        String
+  playsNumber String
+  userId      String?
+  user        User?   @relation(fields: [userId], references: [id])
+}
+
 model User {
-  id           String    @id @default(cuid())
-  email        String    @unique
+  id           String   @id @default(cuid())
+  email        String   @unique
   creationDate DateTime
   passwordHash String
   passwordSalt String
+  songs        Song[]
 }

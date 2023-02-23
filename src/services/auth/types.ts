@@ -1,5 +1,5 @@
+import { ResponseAPI } from '../types';
+
 type User = { email: string; id: string };
 
-export type CreateUserResponseAPI =
-  | { status: 'success'; user: User; error?: never }
-  | { status: 'error'; user?: never; error: string };
+export type CreateUserResponseAPI = ResponseAPI<User>;

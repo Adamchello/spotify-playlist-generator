@@ -14,7 +14,8 @@ const authValuesSchema = Joi.object({
 
 export class AuthAPI {
   static createUser = async (payload: AuthFormValues) => {
-    const { email, password } = await authValuesSchema.validateAsync(payload);
+    const { email, password }: AuthFormValues =
+      await authValuesSchema.validateAsync(payload);
 
     const foundUser = await prisma.user.findUnique({
       where: {
@@ -44,7 +45,8 @@ export class AuthAPI {
   };
 
   static authorizeUser = async (payload: AuthFormValues) => {
-    const { email, password } = await authValuesSchema.validateAsync(payload);
+    const { email, password }: AuthFormValues =
+      await authValuesSchema.validateAsync(payload);
 
     const foundUser = await prisma.user.findUnique({
       where: {
@@ -58,9 +60,20 @@ export class AuthAPI {
     if (passwordHash !== foundUser.passwordHash)
       throw new Error('Invalid email or password!');
 
+    const songs = await prisma.song.findMany({
+      where: {
+        userId: foundUser.id,
+      },
+    });
+
     return {
       id: foundUser.id,
       email: foundUser.email,
+      songs: songs.map((song) => {
+        // eslint-disable-next-line unused-imports/no-unused-vars
+        const { userId, spotifyId, ...rest } = song;
+        return { ...rest, id: spotifyId };
+      }),
     };
   };
 }

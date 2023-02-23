@@ -10,8 +10,8 @@ const handler = async (
   switch (req.method) {
     case 'POST': {
       try {
-        const result = await createUser(req.body);
-        res.status(201).json({ status: 'success', user: result });
+        const data = await createUser(req.body);
+        res.status(201).json({ status: 'success', data });
       } catch (err) {
         res.status(422).json({
           status: 'error',

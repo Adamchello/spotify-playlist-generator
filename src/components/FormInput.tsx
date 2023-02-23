@@ -22,7 +22,7 @@ export function FormInput({
     <div>
       <label
         htmlFor={id}
-        className='mb-2 block text-sm font-medium text-gray-900 dark:text-white'
+        className='mb-2 block font-medium text-gray-900 dark:text-white'
       >
         {label}
       </label>
@@ -33,7 +33,9 @@ export function FormInput({
         placeholder={placeholder}
         {...register(id)}
       />
-      {error.length > 0 ? <p className='my-2 text-red-400'>{error}</p> : null}
+      {error.length > 0 ? (
+        <p className='my-2 text-sm text-red-400'>{error}</p>
+      ) : null}
     </div>
   );
 }
