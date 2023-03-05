@@ -11,7 +11,9 @@ const handler = async (
     case 'POST': {
       try {
         const accessToken = req.body?.accessToken || '';
-        const songs = await getSongs(accessToken);
+        const genre = req.body?.genre || '';
+
+        const songs = await getSongs(accessToken, genre);
         res.status(200).json({ songs });
       } catch (error) {
         res.status(400).json({ songs: [] });

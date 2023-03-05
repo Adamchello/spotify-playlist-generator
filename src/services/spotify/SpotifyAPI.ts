@@ -34,7 +34,7 @@ export class SpotifyAPI {
     };
   };
 
-  static getSongs = async (accessToken: string) => {
+  static getSongs = async (accessToken: string, genre: string) => {
     const requestParams = {
       headers: {
         'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export class SpotifyAPI {
     };
 
     const res = await fetch(
-      'https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=pop&seed_tracks=0c6xIDDpzE81m2q797ordA',
+      `https://api.spotify.com/v1/recommendations?seed_artists=4NHQUGzhtTLFvgF5SZesLK&seed_genres=${genre}&seed_tracks=0c6xIDDpzE81m2q797ordA`,
       requestParams
     );
 
