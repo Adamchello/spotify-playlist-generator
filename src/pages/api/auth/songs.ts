@@ -1,9 +1,11 @@
 import type { NextApiResponse } from 'next';
 
 import { onlyAuth } from '@/middlewares/onlyAuth';
-import { addSongsToUser } from '@/services/auth';
-import { AddSongResponseAPI } from '@/services/auth/types';
-import { NextApiRequestWithUser } from '@/services/auth/types';
+import { addSongsToUser } from '@/services/user';
+import {
+  AddSongResponseAPI,
+  NextApiRequestWithUser,
+} from '@/services/user/types';
 
 const handler = async (
   req: NextApiRequestWithUser,

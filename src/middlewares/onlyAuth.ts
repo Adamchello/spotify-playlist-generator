@@ -4,7 +4,7 @@ import { getServerSession } from 'next-auth/next';
 import prisma from '@/lib/prismadb';
 
 import { authOptions } from '@/pages/api/auth/[...nextauth]';
-import { NextApiRequestWithUser } from '@/services/auth/types';
+import { NextApiRequestWithUser } from '@/services/user/types';
 
 type HandlerArgument = (
   req: NextApiRequestWithUser,
