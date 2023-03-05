@@ -2,10 +2,12 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { signIn } from 'next-auth/react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import * as yup from 'yup';
+
+import useIsMounted from '@/hooks/useIsMounted';
 
 import { FormInput } from '@/components/FormInput';
 import { PageWrapper } from '@/components/PageWrapper';
@@ -30,19 +32,14 @@ export default function SignInPage() {
   });
   const [formProcessing, setFormProcessing] = useState(false);
   const router = useRouter();
-  const isMounted = useRef(false);
+  const isMounted = useIsMounted();
 
   useEffect(() => {
     const signUpInfo = router.query?.signupSuccess || '';
-    if (signUpInfo !== 'true') return;
-
-    if (!isMounted.current) {
-      isMounted.current = true;
-      return;
-    }
+    if (signUpInfo !== 'true' || !isMounted) return;
 
     toast.success('Your account has been created. You can sign in now.');
-  }, [router]);
+  }, [router, isMounted]);
 
   const onSubmit = async ({ email, password }: AuthFormValues) => {
     setFormProcessing(true);

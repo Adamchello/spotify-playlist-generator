@@ -7,11 +7,11 @@ import toast from 'react-hot-toast';
 import { PageWrapper } from '@/components/PageWrapper';
 import { SongInformation } from '@/components/SongInformation';
 
-import { AddSongResponseAPI } from '@/services/auth/types';
 import {
   GetSongsResponseAPI,
   GetTokenResponseAPI,
 } from '@/services/spotify/types';
+import { AddSongResponseAPI } from '@/services/user/types';
 
 import { Song } from '@/types/spotify';
 
@@ -38,25 +38,37 @@ export default function Dashboard() {
     const cookieAccessToken = Cookies.get('spotify_access_token');
     if (cookieAccessToken) return cookieAccessToken;
 
-    try {
-      const result = await fetch('/api/spotify/token');
-      if (!result.ok) {
-        throw Error('Oops. The error has occured, try again later.');
-      }
-      const data: GetTokenResponseAPI = await result.json();
-
-      const { accessToken, expiresTimeInSeconds } = data;
-      const expireDate = new Date(
-        new Date().getTime() + expiresTimeInSeconds * 1000
-      );
-
-      Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
-
-      return accessToken;
-    } catch (err) {
-      toast.error((err as Error).message);
-      return '';
+    const result = await fetch('/api/spotify/token');
+    if (!result.ok) {
+      throw Error('Oops. The error has occured, try again later.');
     }
+    const data: GetTokenResponseAPI = await result.json();
+
+    const { accessToken, expiresTimeInSeconds } = data;
+    const expireDate = new Date(
+      new Date().getTime() + expiresTimeInSeconds * 1000
+    );
+
+    Cookies.set('spotify_access_token', accessToken, { expires: expireDate });
+
+    return accessToken;
+  };
+
+  const handleGeneratePlaylist = async (accessToken: string) => {
+    const result = await fetch('/api/spotify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ accessToken }),
+    });
+    const data: GetSongsResponseAPI = await result.json();
+
+    if (data.songs.length === 0) {
+      throw new Error('Oops! There is an error with server, try again later!');
+    }
+
+    return data.songs;
   };
 
   const handleAddSongsToAccount = async (songsData: Song[]) => {
@@ -70,27 +82,19 @@ export default function Dashboard() {
       }),
     });
     const data: AddSongResponseAPI = await result.json();
-    if (data.status === 'error') throw new Error(data.error);
 
-    setSongs(songsData);
-    toast.success('Data generated successfully');
+    if (data.status === 'error') throw new Error(data.error);
   };
 
-  const handleGeneratePlaylist = async () => {
+  const handleClick = async () => {
     setIsLoading(true);
     try {
       const accessToken = await getAccessToken();
+      const songs = await handleGeneratePlaylist(accessToken);
+      await handleAddSongsToAccount(songs);
 
-      const result = await fetch('/api/spotify', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ accessToken }),
-      });
-      const data: GetSongsResponseAPI = await result.json();
-
-      await handleAddSongsToAccount(data.songs);
+      setSongs(songs);
+      toast.success('Data generated successfully');
     } catch (err) {
       toast.error((err as Error).message);
     } finally {
@@ -108,7 +112,7 @@ export default function Dashboard() {
           Sign out
         </button>
         <button
-          onClick={handleGeneratePlaylist}
+          onClick={handleClick}
           disabled={isLoading}
           className='rounded-lg bg-primary-600 px-12 py-2.5 text-center text-xl font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
         >
