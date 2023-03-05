@@ -99,7 +99,7 @@ export default function Dashboard() {
   };
 
   return (
-    <PageWrapper title='Dashboard - Spotify Trending Artists App'>
+    <PageWrapper title='Dashboard - Spotify Playlist Generator App'>
       <div className='mx-auto flex h-screen max-w-3xl flex-col items-center justify-center px-6 py-8 lg:py-0'>
         <button
           onClick={() => signOut()}
