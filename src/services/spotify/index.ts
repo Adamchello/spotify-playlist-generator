@@ -6,8 +6,8 @@ export const getSpotifyToken = async () => {
   return accessTokenData;
 };
 
-export const getSongs = async (accessToken: string) => {
-  const songsCount = await SpotifyAPI.getSongs(accessToken);
+export const getSongs = async (accessToken: string, genre: string) => {
+  const songsCount = await SpotifyAPI.getSongs(accessToken, genre);
 
   return songsCount;
 };
