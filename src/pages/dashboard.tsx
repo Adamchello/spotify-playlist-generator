@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 import { PageWrapper } from '@/components/PageWrapper';
+import { Select } from '@/components/Select';
 import { SongInformation } from '@/components/SongInformation';
 
 import {
@@ -19,9 +20,25 @@ const getFixedIndex = (index: number) => {
   return index < 10 ? `0${index}` : `${index}`;
 };
 
+const spotifyGenres = [
+  { value: 'pop', label: 'Pop' },
+  { value: 'hip-hop', label: 'Hip-hop' },
+  { value: 'edm', label: 'EDM' },
+  { value: 'house', label: 'House' },
+  { value: 'classical', label: 'Classical' },
+  { value: 'r-n-b', label: 'R&B' },
+  { value: 'blues', label: 'Blues' },
+  { value: 'metal', label: 'Metal' },
+  { value: 'party', label: 'Party' },
+  { value: 'opera', label: 'Opera' },
+  { value: 'techno', label: 'Techno' },
+  { value: 'work-out', label: 'Work-out' },
+];
+
 export default function Dashboard() {
   const [songs, setSongs] = useState<Song[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [chosenGenre, setChosenGenre] = useState('');
 
   const { data: session, status } = useSession();
   const router = useRouter();
@@ -60,7 +77,7 @@ export default function Dashboard() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ accessToken }),
+      body: JSON.stringify({ accessToken, genre: chosenGenre }),
     });
     const data: GetSongsResponseAPI = await result.json();
 
@@ -87,6 +104,11 @@ export default function Dashboard() {
   };
 
   const handleClick = async () => {
+    if (chosenGenre === '') {
+      toast.error('Please select a genre.');
+      return;
+    }
+
     setIsLoading(true);
     try {
       const accessToken = await getAccessToken();
@@ -103,7 +125,7 @@ export default function Dashboard() {
   };
 
   return (
-    <PageWrapper title='Dashboard - Spotify Trending Artists App'>
+    <PageWrapper title='Dashboard - Spotify Playlist Generator App'>
       <div className='mx-auto flex h-screen max-w-3xl flex-col items-center justify-center px-6 py-8 lg:py-0'>
         <button
           onClick={() => signOut()}
@@ -118,8 +140,16 @@ export default function Dashboard() {
         >
           {isLoading ? 'Loading...' : 'Generate Playlist'}
         </button>
+        <Select
+          value={chosenGenre}
+          setValue={(value) => {
+            setChosenGenre(value);
+          }}
+          options={spotifyGenres}
+          placeholder='Choose a genre'
+        />
         {songs.length > 0 ? (
-          <ul className='verflow-y-scroll mt-12 flex h-[450px] w-full flex-col gap-8 pr-6 text-gray-50 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-blue-100'>
+          <ul className='verflow-y-scroll mt-12 flex h-[400px] w-full flex-col gap-8 pr-6 text-gray-50 scrollbar-thin scrollbar-track-gray-800 scrollbar-thumb-blue-100'>
             {songs.map((song, index) => (
               <SongInformation
                 key={song.id}
