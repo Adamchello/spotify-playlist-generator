@@ -19,7 +19,7 @@ The Spotify playlist generator app that creates random playlist based on user's 
 
 ## App overview 🎥
 
-TODO
+https://user-images.githubusercontent.com/62244281/223718011-13283264-57c2-48b7-a79c-c8b16f98cb96.mov
 
 ## Installation 💾
 
