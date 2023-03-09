@@ -1,6 +1,8 @@
 ## Overview 🎉
 
-The Spotify playlist generator app that creates random playlist based on user's selected genre.
+The playlist generator is a project designed to help music lovers expand their musical horizons by creating personalized playlists that introduce them to new sounds and artists. If you're tired of listening to the same old songs on repeat, this tool is perfect for you.
+
+Whether you're looking for new music to work out to, to study with, or simply to relax, the playlist generator has got you covered. The playlist generator is perfect for anyone looking to break out of their musical comfort zone and discover new sounds and artists. Try it out today and add a little bit of new sound to your Spotify playlist!
 
 ## Technologies 🔧
 
