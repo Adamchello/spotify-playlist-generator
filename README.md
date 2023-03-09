@@ -1,3 +1,5 @@
+![githubBanner](https://user-images.githubusercontent.com/62244281/224165105-ad7cfa5b-a889-49fd-ae04-a909e81fde45.png)
+
 ## Overview 🎉
 
 The playlist generator is a project designed to help music lovers expand their musical horizons by creating personalized playlists that introduce them to new sounds and artists. If you're tired of listening to the same old songs on repeat, this tool is perfect for you.
