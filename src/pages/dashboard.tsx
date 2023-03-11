@@ -4,9 +4,9 @@ import { signOut, useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
+import { MultiStepForm } from '@/components/MultiStepForm';
+import { MultiStepFormContextProvider } from '@/components/MultiStepForm/context';
 import { PageWrapper } from '@/components/PageWrapper';
-import { Select } from '@/components/Select';
-import { SongInformation } from '@/components/SongInformation';
 
 import {
   GetSongsResponseAPI,
@@ -133,7 +133,10 @@ export default function Dashboard() {
         >
           Sign out
         </button>
-        <button
+        <MultiStepFormContextProvider>
+          <MultiStepForm />
+        </MultiStepFormContextProvider>
+        {/* <button
           onClick={handleClick}
           disabled={isLoading}
           className='rounded-lg bg-primary-600 px-12 py-2.5 text-center text-xl font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
@@ -158,7 +161,7 @@ export default function Dashboard() {
               />
             ))}
           </ul>
-        ) : null}
+        ) : null} */}
       </div>
     </PageWrapper>
   );

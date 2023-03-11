@@ -34,6 +34,7 @@ export class SpotifyAPI {
     };
   };
 
+  // genres: string[], artists: string[]
   static getSongs = async (accessToken: string, genre: string) => {
     const requestParams = {
       headers: {
