@@ -1,6 +1,6 @@
 import Image from 'next/image';
 
-import { HeartSVG, OptionDotsSVG, UserSVG } from './Icons';
+import { UserSVG } from './Icons';
 
 import { Song } from '@/types/spotify';
 
@@ -17,7 +17,7 @@ export function SongInformation({
 }: SongInformationProps) {
   return (
     <li
-      className='grid grid-cols-[64px_1fr_32px] items-center gap-6 md:grid-cols-[28px_64px_1fr_44px_70px_32px_32px]'
+      className='grid grid-cols-[64px_1fr] items-center gap-6 md:grid-cols-[28px_64px_1fr_60px_100px]'
       key={id}
     >
       <p className='hidden text-xl text-gray-400 md:block'>{elementIndex}</p>
@@ -37,12 +37,6 @@ export function SongInformation({
       </div>
       <b className='hidden text-center md:block'>{duration}</b>
       <p className='hidden text-center md:block'>{playsNumber}</p>
-      <button className='hidden rounded bg-transparent py-1 px-1 hover:bg-gray-700 md:block'>
-        <HeartSVG />
-      </button>
-      <button className='rounded bg-transparent py-1 px-1 hover:bg-gray-700'>
-        <OptionDotsSVG />
-      </button>
     </li>
   );
 }

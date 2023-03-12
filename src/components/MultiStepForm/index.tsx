@@ -1,4 +1,5 @@
 import { useMultiStepFormContext } from './context';
+import { FifthStep } from './steps/FifthStep';
 import { FirstStep } from './steps/FirstStep';
 import { FourthStep } from './steps/FourthStep';
 import { SecondStep } from './steps/SecondStep';
@@ -16,6 +17,8 @@ export function MultiStepForm() {
       return <ThirdStep />;
     case 4:
       return <FourthStep />;
+    case 5:
+      return <FifthStep />;
     default:
       return null;
   }

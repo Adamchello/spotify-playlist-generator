@@ -9,13 +9,14 @@ export type ReducerState = {
   isLoading: boolean;
   chosenArtists: Artist[];
   chosenGenres: string[];
+  generatedTracks: any[];
 };
 
 export type MultiStepFormContextState = ReducerState & {
   handleSetStep: (direction: 'prev' | 'next') => void;
   handleToggleArtist: (artist: Artist) => void;
   handleToggleGenre: (genre: string) => void;
-  generatePlaylist: () => void;
+  generatePlaylist: (tracksAmount: number) => void;
 };
 
 export type FormReducerActions =
@@ -24,4 +25,5 @@ export type FormReducerActions =
   | { type: 'INCREASE_STEP' }
   | { type: 'DECREASE_STEP' }
   | { type: 'TOGGLE_ARTIST'; payload: Artist }
-  | { type: 'TOGGLE_GENRE'; payload: string };
+  | { type: 'TOGGLE_GENRE'; payload: string }
+  | { type: 'ADD_TRACKS'; payload: any };

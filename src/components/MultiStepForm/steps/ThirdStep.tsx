@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useMultiStepFormContext } from '../context';
 
 export function ThirdStep() {
-  const { chosenGenres, handleToggleGenre, handleSetStep, generatePlaylist } =
+  const { chosenGenres, handleToggleGenre, handleSetStep } =
     useMultiStepFormContext();
   const [genres, setGenres] = useState<string[]>([]);
 
@@ -62,7 +62,7 @@ export function ThirdStep() {
       </button>
       <button
         disabled={chosenGenres.length > 2 || chosenGenres.length === 0}
-        onClick={() => generatePlaylist()}
+        onClick={() => handleSetStep('next')}
         className='mt-12 rounded-lg bg-primary-600 px-12 py-2.5 text-center text-xl font-medium text-white focus:outline-none focus:ring-4 focus:ring-primary-300 hover:bg-primary-700 dark:bg-primary-600 dark:focus:ring-primary-800 dark:hover:bg-primary-700'
       >
         ({chosenGenres.length}/2) Next

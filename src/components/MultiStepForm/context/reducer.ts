@@ -10,6 +10,8 @@ export function formReducer(state: ReducerState, action: FormReducerActions) {
       return { ...state, currentStep: state.currentStep + 1 };
     case 'DECREASE_STEP':
       return { ...state, currentStep: state.currentStep - 1 };
+    case 'ADD_TRACKS':
+      return { ...state, generatedTracks: action.payload };
     case 'TOGGLE_GENRE':
       if (state.chosenGenres.some((genre) => genre === action.payload)) {
         return {

@@ -3,4 +3,5 @@ export const intitialState = {
   isLoading: false,
   chosenArtists: [],
   chosenGenres: [],
+  generatedTracks: [],
 };
